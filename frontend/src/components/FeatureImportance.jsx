@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
+ const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://127.0.0.1:8000";
 
 export default function FeatureImportance() {
   const [data, setData] = useState({});
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/feature-importance")
+  useEffect(() => {   
+
+     fetch(`${API_BASE_URL}/feature-importance`)
       .then((res) => res.json())
       .then(setData);
   }, []);
