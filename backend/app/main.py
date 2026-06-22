@@ -160,6 +160,21 @@ def get_passport(
             status_code=404,
             detail="Battery not found",
         )
+    battery.ai_explanation = explain_prediction(
+        battery.voltage,
+        battery.current,
+        battery.temperature,
+        battery.cycle_count,
+        battery.capacity,
+    )
+
+    battery.risk_alerts = get_risk_alert(
+       battery.voltage,
+       battery.current,
+       battery.temperature,
+       battery.cycle_count,
+       battery.soh,
+    )
 
     return battery
 
