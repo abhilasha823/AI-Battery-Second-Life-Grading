@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { CheckCircle2, FileSpreadsheet, Loader2, UploadCloud } from "lucide-react";
+import {
+  CheckCircle2,
+  FileSpreadsheet,
+  Loader2,
+  UploadCloud,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { uploadBatteryCsv } from "../api.js";
 
@@ -8,6 +13,7 @@ export default function Upload() {
   const [error, setError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [count, setCount] = useState(0);
+
   const navigate = useNavigate();
 
   async function handleSubmit(event) {
@@ -20,13 +26,55 @@ export default function Upload() {
     }
 
     setIsUploading(true);
+
     try {
       const results = await uploadBatteryCsv(file);
-      localStorage.setItem("latestBatteryResults", JSON.stringify(results));
+
+      localStorage.setItem(
+        "latestBatteryResults",
+        JSON.stringify(results)
+      );
+
       setCount(results.length);
+
       setTimeout(() => navigate("/results"), 700);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  async function loadDemoDataset() {
+    setError("");
+    setIsUploading(true);
+
+    try {
+      const response = await fetch("/demo_judge_dataset.csv");
+
+      const blob = await response.blob();
+
+      const demoFile = new File(
+        [blob],
+        "demo_judge_dataset.csv",
+        {
+          type: "text/csv",
+        }
+      );
+
+      const results = await uploadBatteryCsv(demoFile);
+
+      localStorage.setItem(
+        "latestBatteryResults",
+        JSON.stringify(results)
+      );
+
+      setCount(results.length);
+
+      setTimeout(() => navigate("/results"), 700);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load demo dataset.");
     } finally {
       setIsUploading(false);
     }
@@ -38,10 +86,16 @@ export default function Upload() {
         <p className="eyebrow">
           CSV ingestion
         </p>
-        <h1 className="page-title">Battery Upload</h1>
+
+        <h1 className="page-title">
+          Battery Upload
+        </h1>
+
         <p className="page-copy">
-          Upload battery telemetry with battery ID, voltage, current, temperature, cycle count,
-          and capacity. The API will estimate SOH and return a grade with a routing recommendation.
+          Upload battery telemetry with battery ID, voltage,
+          current, temperature, cycle count, and capacity.
+          The API estimates SOH and returns a grade with a
+          second-life recommendation.
         </p>
       </section>
 
@@ -53,26 +107,44 @@ export default function Upload() {
           htmlFor="csv"
           className="dropzone"
         >
-          <UploadCloud className="dropzone-icon" size={42} />
+          <UploadCloud
+            className="dropzone-icon"
+            size={42}
+          />
+
           <span className="dropzone-title">
-            {file ? file.name : "Drop in a battery CSV file"}
+            {file
+              ? file.name
+              : "Drop in a battery CSV file"}
           </span>
+
           <span className="dropzone-help">
-            Required fields: battery_id, voltage, current, temperature, cycle_count, capacity
+            Required fields:
+            battery_id, voltage, current,
+            temperature, cycle_count, capacity
           </span>
+
           <input
             id="csv"
             type="file"
             accept=".csv,text/csv"
             className="visually-hidden"
-            onChange={(event) => setFile(event.target.files?.[0] || null)}
+            onChange={(event) =>
+              setFile(
+                event.target.files?.[0] || null
+              )
+            }
           />
         </label>
 
         <div className="example-card">
           <div className="inline-info">
-            <FileSpreadsheet size={18} className="icon-green" />
-            Example row: BAT-001, 384.5, 42.1, 31.8, 680, 91.4
+            <FileSpreadsheet
+              size={18}
+              className="icon-green"
+            />
+            Example row:
+            BAT-001, 384.5, 42.1, 31.8, 680, 91.4
           </div>
         </div>
 
@@ -89,14 +161,49 @@ export default function Upload() {
           </div>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={isUploading}
-          className="button button-primary upload-button"
+        <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            flexWrap: "wrap",
+          }}
         >
-          {isUploading ? <Loader2 className="spin" size={18} /> : <UploadCloud size={18} />}
-          {isUploading ? "Running Predictions" : "Upload and Predict"}
-        </button>
+          <button
+            type="submit"
+            disabled={isUploading}
+            className="button button-primary upload-button"
+          >
+            {isUploading ? (
+              <Loader2
+                className="spin"
+                size={18}
+              />
+            ) : (
+              <UploadCloud size={18} />
+            )}
+
+            {isUploading
+              ? "Running Predictions"
+              : "Upload and Predict"}
+          </button>
+
+          <button
+            type="button"
+            onClick={loadDemoDataset}
+            disabled={isUploading}
+            className="button"
+          >
+            Load Demo Dataset
+          </button>
+
+          <a
+            href="/demo_judge_dataset.csv"
+            download
+            className="button"
+          >
+            ⬇ Download Sample CSV
+          </a>
+        </div>
       </form>
     </div>
   );
