@@ -57,6 +57,13 @@ app.add_middleware(
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
 
+@app.get("/")
+def root():
+    return {
+        "status": "healthy",
+        "service": "AI Battery Second Life Grading API"
+    }
+
 
 @app.get("/health")
 def health() -> dict[str, str]:
