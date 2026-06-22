@@ -125,32 +125,39 @@ def explain_prediction(
 
     if capacity < 1.2:
         reasons.append(
-            "Battery capacity is significantly reduced, lowering overall State of Health."
+            "Reduced battery capacity is the strongest indicator of State of Health degradation."
+        )
+    else:
+        reasons.append(
+            "Battery retains sufficient capacity, supporting continued second-life operation."
         )
 
     if cycle_count > 1000:
         reasons.append(
-            "High cycle count indicates long-term degradation from repeated charging cycles."
+            "High cycle count suggests long-term wear from repeated charge-discharge cycles."
+        )
+    elif cycle_count < 600:
+        reasons.append(
+            "Moderate cycle count indicates limited aging and remaining useful life."
         )
 
     if temperature > 35:
         reasons.append(
-            "Elevated operating temperature accelerates battery aging."
+            "Elevated operating temperature contributes to accelerated battery degradation."
+        )
+    else:
+        reasons.append(
+            "Operating temperature remains within a healthy range for battery longevity."
         )
 
     if voltage < 3.2:
         reasons.append(
-            "Lower voltage suggests reduced energy retention capability."
+            "Lower voltage levels indicate reduced energy retention capability."
         )
 
     if current > 2.0:
         reasons.append(
-            "Higher current draw increases stress on battery cells."
+            "High current demand increases electrochemical stress on battery cells."
         )
 
-    if not reasons:
-        reasons.append(
-            "Battery parameters are within normal operating range."
-        )
-
-    return reasons
+    return reasons[:3]
