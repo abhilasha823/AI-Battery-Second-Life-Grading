@@ -316,3 +316,50 @@ The platform supports:
 - OEM integration APIs
 
 ---
+
+## 🔧 Environment Requirements
+
+- Python 3.11+
+- Node.js 20+
+- npm 10+
+- SQLite (included)
+
+Tested on:
+
+- Windows 11
+- Python 3.11
+- Node.js 20
+
+## 📦 Key Dependencies
+
+Backend:
+- FastAPI
+- Uvicorn
+- SQLAlchemy
+- Scikit-learn
+- Pandas
+- NumPy
+- Joblib
+
+Frontend:
+- React
+- Vite
+- Tailwind CSS
+- Recharts
+- React Router
+
+All dependencies can be installed using:
+
+Backend:
+pip install -r requirements.txt
+
+Frontend:
+npm install
+
+## 📁 Sample Data
+
+A sample dataset is provided in:
+
+sample_data/sample_battery_data.csv
+
+This file can be used to test the complete workflow.
